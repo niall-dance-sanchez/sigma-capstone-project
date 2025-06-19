@@ -38,7 +38,7 @@ def player_selection(player_stats, player_type):
         except:
             print("Input a valid number please.")
 
-    return player_stats[user_player- 1]
+    return player_stats[user_player-1]
  
 
 def coin_toss():
@@ -60,9 +60,9 @@ def penalty(keeper_stats_avg, taker_stats_avg, goalkeeper, first_taker):
     DEFINTION
     '''
     if goalkeeper: 
-        phrases = ["dive", "Goal! Hang your head in shame.", "Penalty saved! The crowd goes wild." , "stood between the wrong goalposts, bad luck."]
+        phrases = ["dive", "Penalty saved! The crowd goes wild.",  "Goal! Hang your head in shame.", "stood between the wrong goalposts, bad luck."]
     else: 
-        phrases = ["shoot", "Oh no! Penalty saved.", "Goal! The crowd goes wild.", "felt too embarassed to take the penalty."]
+        phrases = ["shoot", "Goal! The crowd goes wild.", "Oh no! Penalty saved.", "felt too embarassed to take the penalty."]
 
     try: 
         user_choice = int(input(f"Where would you like to {phrases[0]}? \n ------------- \n | 1   2   3 | \n | 4   5   6 | \n"))
@@ -71,60 +71,18 @@ def penalty(keeper_stats_avg, taker_stats_avg, goalkeeper, first_taker):
         opponent = random.randint(1, 100) + int(not first_taker)*5
         #opponent_save = 2
 
-        if (goalkeeper and opponent >= keeper_stats_avg) and (not goalkeeper and opponent >= taker_stats_avg): 
+        if (goalkeeper and opponent <= keeper_stats_avg) or (not goalkeeper and opponent <= taker_stats_avg): 
             print(f"{phrases[1]}")
-            return False
+            print(opponent, f'keeper = {keeper_stats_avg}', f'taker = {taker_stats_avg}')
+            return True
         else:
             print(f"{phrases[2]}")
-            return True
+            print(opponent, f'keeper = {keeper_stats_avg}', f'taker = {taker_stats_avg}')
+            return False
     except: 
         print(f"You {phrases[3]}")
 
 
-def take_penalty(taker_stats_avg, first_taker):
-    '''
-    DEFINITION
-    '''
-    try:
-        user_choice = int(input("Where would you like to shoot? \n ------------- \n | 1   2   3 | \n | 4   5   6 | \n"))
-        if not 0 < user_choice < 7:
-            raise Exception
-        opponent_shot = random.randint(1, 100) + int(not first_taker)*5 
-        print(opponent_shot, taker_stats_avg)
-        #opponent_shot = 1
-        int(not first_taker)
-        if opponent_shot >= taker_stats_avg: 
-            print("Oh no! Penalty saved.")
-            return False
-        else: 
-            print("Goal! The crowd goes wild.")
-            return True
-    except: 
-        print("You stood between the wrong goalpoasts, bad luck.")
-
-def save_penalty(keeper_stats_avg, first_taker):
-    '''
-    DEFINITION
-    '''
-    try:
-        user_choice = int(input("Where would you like to dive? \n ------------- \n | 1   2   3 | \n | 4   5   6 | \n"))
-        if not 0 < user_choice < 7:
-            raise Exception
-        opponent_shot = random.randint(1, 100) + int(not first_taker)*5 
-        print(opponent_shot, keeper_stats_avg)
-        #opponent_shot = 1
-        int(not first_taker)
-        if opponent_shot <= keeper_stats_avg: 
-            print("Penalty saved! The crowd goes wild.")
-            return True
-        else: 
-            print("Goal! Hang your head in shame.")
-            return False
-    except: 
-        print("You stood between the wrong goalpoasts, bad luck.")
-
-
-    
 def check_score(user_score, opponent_score, shot_count):
         '''
         DEFINITION
@@ -153,7 +111,6 @@ def penalty_shootout():
     '''
     DEFINITION
     '''
-
     # prompt user to select their penalty taker and goalkeeper
     user_taker = player_selection(taker_stats, 'penalty taker')
     user_keeper = player_selection(keeper_stats, 'goalkeeper')
@@ -173,8 +130,8 @@ def penalty_shootout():
         # take first penalty if the player won the coin toss, 
         # if not skip this code once as the player is taking second    
         if (not first_taker and shot_count != 0) or first_taker: 
-            #if penalty(keeper_stats_avg, taker_stats_avg, False, first_taker):    
-            if take_penalty(taker_stats_avg, first_taker):
+            if penalty(keeper_stats_avg, taker_stats_avg, False, first_taker):    
+            #if take_penalty(taker_stats_avg, first_taker):
                 user_score += 1
 
             shot_count += 1
@@ -183,8 +140,8 @@ def penalty_shootout():
             if check_score(user_score, opponent_score, shot_count):
                 break
         
-        #if penalty(keeper_stats_avg, taker_stats_avg, True, first_taker):
-        if not save_penalty(keeper_stats_avg, first_taker):
+        if not penalty(keeper_stats_avg, taker_stats_avg, True, first_taker):
+        #if not save_penalty(keeper_stats_avg, first_taker):
             opponent_score += 1 
 
         shot_count += 1
