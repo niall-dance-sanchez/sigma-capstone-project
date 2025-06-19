@@ -43,7 +43,7 @@ def player_selection(player_stats, player_type):
 
 def coin_toss():
     '''
-    DEFINITION
+    perform a coin toss to determine if the user or opponent takes the first penalty
     '''
     coin_choice = input("Heads (H) or Tails (T)? (To determine first taker): ").lower()
     outcomes = ['h', 't']
