@@ -1,10 +1,11 @@
 import random
 from datetime import datetime
 
+
 def age_calculator(dob):
     '''
     Calculate a person's age from their date of birth. 
-    
+
     Args:
     dob (str): The user's date of birth.
     '''
@@ -30,24 +31,26 @@ def player_selection(player_stats, player_type, user_points):
     # points required to unlock each goalkeeper and penalty taker
     if player_type == "goalkeeper":
         player_points = [0, 500, 1750, 3750, 7500]
-    else: 
+    else:
         player_points = [0, 1000, 2500, 5000, 10000]
 
-    while True: 
+    while True:
         # display a numbered list of the player names for the user to select from
         player_names = [d.get("Name") for d in player_stats]
         player_names_str = ''
         for num, name in enumerate(player_names):
             player_names_str += f"{num+1}. {name} (Points required: {player_points[num]}) \n "
 
-        try: 
-            user_player = int(input(f"Choose your {player_type} (select to preview stats): \n {player_names_str}"))
+        try:
+            user_player = int(input(
+                f"Choose your {player_type} (select to preview stats): \n {player_names_str}"))
 
             # check that the user's input is valid and they have enough points to select the chosen player.
-            # allow them to view the stats of their chosen player and either confirm or go back to re-select.
+            #  allow them to view the stats of their chosen player and either confirm or go back to re-select.
             if 0 < user_player < len(player_names)+1 and player_points[user_player-1] <= user_points:
-                print(player_stats[user_player- 1])
-                confirm = input("Type YES to confirm choice or anything else to go back: ").lower()
+                print(player_stats[user_player - 1])
+                confirm = input(
+                    "Type YES to confirm choice or anything else to go back: ").lower()
             elif player_points[user_player-1] >= user_points:
                 print("You do not have enought points to select this player.")
                 continue
@@ -55,27 +58,28 @@ def player_selection(player_stats, player_type, user_points):
                 raise Exception
 
             if confirm == "yes":
-                break 
+                break
         except:
             print("Input a valid number please.")
 
     return player_stats[user_player-1]
- 
+
 
 def coin_toss():
     '''
     Perform a coin toss to determine if the user or opponent takes the first penalty.
     '''
-    coin_choice = input("Heads (H) or Tails (T)? (To determine first taker): ").lower()
+    coin_choice = input(
+        "Heads (H) or Tails (T)? (To determine first taker): ").lower()
     outcomes = ['h', 't']
-    flip = random.randint(0,1)
+    flip = random.randint(0, 1)
     if coin_choice == outcomes[flip]:
         print("Good choice! You're up first.")
         return True
-    else: 
+    else:
         print("Poor decision! You're taking second.")
-        return False 
-    
+        return False
+
 
 def penalty(keeper_stats_avg, taker_stats_avg, goalkeeper, first_taker, difficulty):
     '''
@@ -88,29 +92,35 @@ def penalty(keeper_stats_avg, taker_stats_avg, goalkeeper, first_taker, difficul
     first_taker (bool): True if the user took the first penalty of the shootout, False if not.
     difficulty (str): Determines the difficulty of the shootout - Easy, Intermediate, Hard, Very Hard.
     '''
-    if goalkeeper: 
-        phrases = ["dive", "Penalty saved! The crowd goes wild.",  "Goal! Hang your head in shame.", "stood between the wrong goalposts, bad luck."]
-    else: 
-        phrases = ["shoot", "Goal! The crowd goes wild.", "Oh no! Penalty saved.", "felt too embarassed to take the penalty."]
+    if goalkeeper:
+        phrases = ["dive", "Penalty saved! The crowd goes wild.",
+                   "Goal! Hang your head in shame.", "stood between the wrong goalposts, bad luck."]
+    else:
+        phrases = ["shoot", "Goal! The crowd goes wild.",
+                   "Oh no! Penalty saved.", "felt too embarassed to take the penalty."]
 
-    try: 
-        user_choice = int(input(f"Where would you like to {phrases[0]}? \n ------------- \n | 1   2   3 | \n | 4   5   6 | \n"))
+    try:
+        user_choice = int(input(
+            f"Where would you like to {phrases[0]}? \n ------------- \n | 1   2   3 | \n | 4   5   6 | \n"))
         if not 0 < user_choice < 7:
             raise Exception
-        
-        # the chance of the opponent saving/scoring each penalty increases by 5% if they win the coin toss to reflect the advantage of doing so in real life.
-        # for each level of difficulty above Easy the opponent has a 10% greater chance of scoring or saving a penalty.
-        opponent = random.randint(1, 100) + int(not first_taker)*5 + (difficulty-1)*10
 
-        if (goalkeeper and opponent <= keeper_stats_avg) or (not goalkeeper and opponent <= taker_stats_avg): 
+        #  the chance of the opponent saving/scoring each penalty increases by 5% if they win the coin toss to reflect the advantage of doing so in real life.
+        # for each level of difficulty above Easy the opponent has a 10% greater chance of scoring or saving a penalty.
+        opponent = random.randint(
+            1, 100) + int(not first_taker)*5 + (difficulty-1)*10
+
+        if (goalkeeper and opponent <= keeper_stats_avg) or (not goalkeeper and opponent <= taker_stats_avg):
             print(f"{phrases[1]}")
-            print(opponent, f"keeper = {keeper_stats_avg}", f"taker = {taker_stats_avg}")
+            print(opponent, f"keeper = {keeper_stats_avg}",
+                  f"taker = {taker_stats_avg}")
             return True
         else:
             print(f"{phrases[2]}")
-            print(opponent, f"keeper = {keeper_stats_avg}", f"taker = {taker_stats_avg}")
+            print(opponent, f"keeper = {keeper_stats_avg}",
+                  f"taker = {taker_stats_avg}")
             return False
-    except: 
+    except:
         print(f"You {phrases[3]}")
 
 
@@ -127,7 +137,7 @@ def check_score(user_score, opponent_score, shot_count, first_taker):
     if first_taker:
         user_shot_count = (shot_count+1) // 2
         opponent_shot_count = shot_count // 2
-    else: 
+    else:
         opponent_shot_count = (shot_count+1) // 2
         user_shot_count = shot_count // 2
 
@@ -136,28 +146,41 @@ def check_score(user_score, opponent_score, shot_count, first_taker):
 
     if shot_count < 10 and (user_score > opponent_score + opponent_remaining or opponent_score > user_score + user_remaining):
         return True
-    elif shot_count >= 10 and shot_count % 2 == 0 and user_score != opponent_score: 
+    elif shot_count >= 10 and shot_count % 2 == 0 and user_score != opponent_score:
         return True
 
     return False
 
-taker_stats = [{"Name": "Alvaro Morata", "Age": f"{age_calculator('23-10-1992')}", "Shot power": 55, "Accuracy": 48, "Composure": 27, 
-                "Special ability": None},
-                {"Name": "Scott McTominay", "Age": f"{age_calculator('08-12-1996')}", "Shot power": 58, "Accuracy": 42, "Composure": 50, "Special ability": None},
-                {"Name": "Bruno Fernandes", "Age": f"{age_calculator('08-09-1994')}", "Shot power": 60, "Accuracy": 56, "Composure": 64, "Special ability": "Hop penalty"},
-                {"Name": "Andrea Pirlo", "Age": f"{age_calculator('19-05-1979')}", "Shot power": 46, "Accuracy": 75, "Composure": 90, "Special ability": "Panenka penalty"},
-                {"Name": "Cristiano Ronaldo", "Age": f"{age_calculator('05-02-1985')}", "Shot power": 85, "Accuracy": 73, "Composure": 82, "Special ability": "Volley penalty"}]
 
-keeper_stats = [{"Name": "Kepa Arrizabalaga", "Age": f"{age_calculator('03-10-1994')}", "Diving": 70, "Handling": 58, "Reflexes": 32, 
+taker_stats = [{"Name": "Alvaro Morata", "Age": f"{age_calculator('23-10-1992')}", "Shot power": 55, "Accuracy": 48, "Composure": 27,
+                "Special ability": None},
+               {"Name": "Scott McTominay",
+                   "Age": f"{age_calculator('08-12-1996')}", "Shot power": 58, "Accuracy": 42, "Composure": 50, "Special ability": None},
+               {"Name": "Bruno Fernandes", "Age": f"{age_calculator('08-09-1994')}", "Shot power": 60,
+                "Accuracy": 56, "Composure": 64, "Special ability": "Hop penalty"},
+               {"Name": "Andrea Pirlo", "Age": f"{age_calculator('19-05-1979')}", "Shot power": 46,
+                "Accuracy": 75, "Composure": 90, "Special ability": "Panenka penalty"},
+               {"Name": "Cristiano Ronaldo", "Age": f"{age_calculator('05-02-1985')}", "Shot power": 85, "Accuracy": 73, "Composure": 82, "Special ability": "Volley penalty"}]
+
+keeper_stats = [{"Name": "Kepa Arrizabalaga", "Age": f"{age_calculator('03-10-1994')}", "Diving": 70, "Handling": 58, "Reflexes": 32,
                  "Special ability": None},
-                {"Name": "David Marshall", "Age": f"{age_calculator('05-03-1985')}", "Diving": 70, "Handling": 58, "Reflexes": 32, "Special ability": None},
-                {"Name": "Unai Simon", "Age": f"{age_calculator('11-06-1997')}", "Diving": 70, "Handling": 58, "Reflexes": 32, "Special ability": "Early read"},
-                {"Name": "Petr Cech", "Age": f"{age_calculator('20-05-1982')}", "Diving": 70, "Handling": 58, "Reflexes": 32, "Special ability": "Safe hands"},
+                {"Name": "David Marshall",
+                    "Age": f"{age_calculator('05-03-1985')}", "Diving": 70, "Handling": 58, "Reflexes": 32, "Special ability": None},
+                {"Name": "Unai Simon", "Age": f"{age_calculator('11-06-1997')}", "Diving": 70,
+                 "Handling": 58, "Reflexes": 32, "Special ability": "Early read"},
+                {"Name": "Petr Cech", "Age": f"{age_calculator('20-05-1982')}", "Diving": 70,
+                 "Handling": 58, "Reflexes": 32, "Special ability": "Safe hands"},
                 {"Name": "Iker Casillas", "Age": f"{age_calculator('20-05-1981')}", "Diving": 70, "Handling": 58, "Reflexes": 32, "Special ability": "Cat spring"}]
+
 
 def penalty_shootout():
     '''
-    Penalty shootout game which challenges the user to unlock better players by winning shootouts. Shootouts follow regular football rules with a toss to decide who to go first. Goals are determined by comparing the average of the penalty taker or goalkeeper's stats with a randomly generated number between 1-100 (The greater number wins). The user can unlock players by earning enough points through scoring goals and winning shootouts. More points can be earned by winning shootouts of a harder difficulty (there are 4 levels of difficulty). The user can end the game after every shootout and their stats will be displayed at the end.
+    Penalty shootout game which challenges the user to unlock better players by winning shootouts. 
+    Shootouts follow regular football rules with a toss to decide who to go first. 
+    Goals are determined by comparing the average of the penalty taker or goalkeeper's stats with a randomly generated number between 1-100 (The greater number wins). 
+    The user can unlock players by earning enough points through scoring goals and winning shootouts. 
+    More points can be earned by winning shootouts of a harder difficulty (there are 4 levels of difficulty). 
+    The user can end the game after every shootout and their stats will be displayed at the end.
     '''
     points = 0
     round_points = 0
@@ -165,20 +188,22 @@ def penalty_shootout():
 
     print("#"*28 + "\nWelcome to Penalty Shootout!\n" + "#"*28)
 
-    while True: 
-        
+    while True:
+
         points += round_points
-        
-        if points < 0: 
+
+        if points < 0:
             points = 0
 
         # prompt the user to play again or exit the game after they have played more than one shootout
-        if plays: 
-            play_again = input(f"Total points = {points} \n Would you like to play again? (Type YES to continue or anything else to finish) ").lower()
+        if plays:
+            play_again = input(
+                f"Total points = {points} \n Would you like to play again? (Type YES to continue or anything else to finish) ").lower()
             if play_again != "yes":
                 break
-            
-        difficulty = int(input("What difficulty would you like to play on:\n1.Easy (200 point win)\n2.Intermediate (400 point win)\n3.Hard (600 point win)\n4.Very Hard (800 point win)\n"))
+
+        difficulty = int(input(
+            "What difficulty would you like to play on:\n1.Easy (200 point win)\n2.Intermediate (400 point win)\n3.Hard (600 point win)\n4.Very Hard (800 point win)\n"))
 
         round_points -= round_points
 
@@ -196,39 +221,41 @@ def penalty_shootout():
         keeper_stats_avg = sum(list(user_keeper.values())[2:5]) // 3
         list(user_taker.values())[5]
 
-        while True: 
+        while True:
 
-            # prompt the user to take first penalty if they won the coin toss, 
-            # if not skip this code once as the user is taking second   
-            if (not first_taker and shot_count != 0) or first_taker: 
-                if penalty(keeper_stats_avg, taker_stats_avg, False, first_taker, difficulty):    
+            # prompt the user to take first penalty if they won the coin toss,
+            # if not skip this code once as the user is taking second
+            if (not first_taker and shot_count != 0) or first_taker:
+                if penalty(keeper_stats_avg, taker_stats_avg, False, first_taker, difficulty):
                     round_points += 50
                     user_score += 1
                 shot_count += 1
                 print(f"You {user_score} - {opponent_score} Opp")
                 if check_score(user_score, opponent_score, shot_count, first_taker):
                     break
-            
+
             if not penalty(keeper_stats_avg, taker_stats_avg, True, first_taker, difficulty):
-                opponent_score += 1 
+                opponent_score += 1
             shot_count += 1
             print(f"You {user_score} - {opponent_score} Opp")
 
             if check_score(user_score, opponent_score, shot_count, first_taker):
                 break
-        
+
         # determine the winner of the shootout
         scores = [user_score, opponent_score]
         winner = scores.index(max(scores))
         plays += 1
 
-        if winner == 0: 
+        if winner == 0:
             round_points += 200 + (difficulty-1)*200
             print(f"You win!!! \nRound points: {round_points}")
         else:
             round_points -= 200
             print(f"You lose!!! \nRound points: {round_points}")
-    
-    print(f"After {plays} shootout{'s' * bool(plays-1)} you scored {points} points!")
-    
+
+    print(
+        f"After {plays} shootout{'s' * bool(plays-1)} you scored {points} points!")
+
+
 penalty_shootout()
