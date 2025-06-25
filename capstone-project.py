@@ -43,7 +43,7 @@ def player_selection(player_stats, player_type, user_points):
 
         try:
             user_player = int(input(
-                f"Choose your {player_type} (select to preview stats): \n {player_names_str}"))
+                f"Points = {user_points} \nChoose your {player_type} (select to preview stats): \n {player_names_str}"))
 
             # check that the user's input is valid and they have enough points to select the chosen player.
             #  allow them to view the stats of their chosen player and either confirm or go back to re-select.
@@ -52,7 +52,7 @@ def player_selection(player_stats, player_type, user_points):
                 confirm = input(
                     "Type YES to confirm choice or anything else to go back: ").lower()
             elif player_points[user_player-1] >= user_points:
-                print("You do not have enought points to select this player.")
+                print("You do not have enough points to select this player.")
                 continue
             else:
                 raise Exception
@@ -87,7 +87,7 @@ def penalty(keeper_stats_avg, taker_stats_avg, goalkeeper, first_taker, difficul
 
     args:
     keeper_stats_avg (int): Mean of the statistics of the user's chosen keeper.
-    taker_stats_avg (int): Mean of statistics of the user's chosen penlaty taker.
+    taker_stats_avg (int): Mean of statistics of the user's chosen penalty taker.
     goalkeeper (bool): True if the user is saving a penalty, False if they are shooting.
     first_taker (bool): True if the user took the first penalty of the shootout, False if not.
     difficulty (str): Determines the difficulty of the shootout - Easy, Intermediate, Hard, Very Hard.
@@ -97,7 +97,7 @@ def penalty(keeper_stats_avg, taker_stats_avg, goalkeeper, first_taker, difficul
                    "Goal! Hang your head in shame.", "stood between the wrong goalposts, bad luck."]
     else:
         phrases = ["shoot", "Goal! The crowd goes wild.",
-                   "Oh no! Penalty saved.", "felt too embarassed to take the penalty."]
+                   "Oh no! Penalty saved.", "felt too embarrassed to take the penalty."]
 
     try:
         user_choice = int(input(
@@ -105,10 +105,11 @@ def penalty(keeper_stats_avg, taker_stats_avg, goalkeeper, first_taker, difficul
         if not 0 < user_choice < 7:
             raise Exception
 
-        #  the chance of the opponent saving/scoring each penalty increases by 5% if they win the coin toss to reflect the advantage of doing so in real life.
-        # for each level of difficulty above Easy the opponent has a 10% greater chance of scoring or saving a penalty.
+        # the chance of the opponent saving/scoring each penalty increases by 5% if they win the coin toss to reflect the advantage of doing so in real life.
+        # for each level of difficulty above Easy the opponent has a 10% greater chance of scoring/saving a penalty.
+        buffer = int(not first_taker)*5 + (difficulty-1)*10
         opponent = random.randint(
-            1, 100) + int(not first_taker)*5 + (difficulty-1)*10
+            1+buffer, 100+buffer)
 
         if (goalkeeper and opponent <= keeper_stats_avg) or (not goalkeeper and opponent <= taker_stats_avg):
             print(f"{phrases[1]}")
@@ -203,7 +204,7 @@ def penalty_shootout():
                 break
 
         difficulty = int(input(
-            "What difficulty would you like to play on:\n1.Easy (200 point win)\n2.Intermediate (400 point win)\n3.Hard (600 point win)\n4.Very Hard (800 point win)\n"))
+            "What difficulty would you like to play on:\n1. Easy (200 point win)\n2. Intermediate (400 point win)\n3. Hard (600 point win)\n4. Very Hard (800 point win)\n"))
 
         round_points -= round_points
 
@@ -248,10 +249,10 @@ def penalty_shootout():
         plays += 1
 
         if winner == 0:
-            round_points += 200 + (difficulty-1)*200
+            round_points += 300 + (difficulty-1)*200
             print(f"You win!!! \nRound points: {round_points}")
         else:
-            round_points -= 200
+            round_points -= 150
             print(f"You lose!!! \nRound points: {round_points}")
 
     print(
