@@ -8,4 +8,5 @@ Penalty shootout game which challenges the user to unlock better players and sco
 	- More points are earned by winning shootouts of a harder difficulty. 
 	- Earning points allows the user to unlock better penalty takers and goalkeepers which are selected before each shootout.  
 	- The user can end the game after every shootout and their points and number of shootouts played will be displayed at the end.
+
 	
