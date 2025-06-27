@@ -106,12 +106,12 @@ def penalty(keeper_stats_avg, taker_stats_avg, goalkeeper, first_taker, difficul
         if not 0 < user_choice < 7:
             raise Exception
 
-        # the winner of the coin toss gets an 5% increase on their chances of scoring/saving each penalty to reflect the advantage of doing so in real life.
+        # the winner of the coin toss gets an 5% increase on their chances of scoring/saving each penalty.
         # for each level of difficulty above Easy the opponent has a 10% greater chance of scoring/saving a penalty.
-        buffer = int(not first_taker)*5 - \
+        advantage_modifier = int(not first_taker)*5 - \
             int(first_taker)*5 + (difficulty-1)*10
         opponent = random.randint(
-            0+buffer, 99+buffer)
+            0+advantage_modifier, 99+advantage_modifier)
 
         if (goalkeeper and opponent <= keeper_stats_avg) or (not goalkeeper and opponent <= taker_stats_avg):
             print(f"{phrases[1]}")
@@ -155,25 +155,23 @@ def check_score(user_score, opponent_score, shot_count, first_taker):
     return False
 
 
-taker_stats = [{"Name": "Alvaro Morata", "Age": f"{age_calculator('23-10-1992')}", "Shot power": 60, "Accuracy": 53, "Composure": 37,
-                "Special ability": None},
+taker_stats = [{"Name": "Alvaro Morata", "Age": f"{age_calculator('23-10-1992')}", "Shot power": 60, "Accuracy": 53, "Composure": 37},
                {"Name": "Scott McTominay",
-                   "Age": f"{age_calculator('08-12-1996')}", "Shot power": 68, "Accuracy": 57, "Composure": 55, "Special ability": None},
+                   "Age": f"{age_calculator('08-12-1996')}", "Shot power": 68, "Accuracy": 57, "Composure": 55},
                {"Name": "Bruno Fernandes", "Age": f"{age_calculator('08-09-1994')}", "Shot power": 62,
-                "Accuracy": 73, "Composure": 75, "Special ability": "Hop penalty"},
+                "Accuracy": 73, "Composure": 75},
                {"Name": "Andrea Pirlo", "Age": f"{age_calculator('19-05-1979')}", "Shot power": 53,
-                "Accuracy": 94, "Composure": 93, "Special ability": "Panenka penalty"},
-               {"Name": "Cristiano Ronaldo", "Age": f"{age_calculator('05-02-1985')}", "Shot power": 95, "Accuracy": 84, "Composure": 91, "Special ability": "Volley penalty"}]
+                "Accuracy": 94, "Composure": 93},
+               {"Name": "Cristiano Ronaldo", "Age": f"{age_calculator('05-02-1985')}", "Shot power": 95, "Accuracy": 84, "Composure": 91}]
 
-keeper_stats = [{"Name": "Kepa Arrizabalaga", "Age": f"{age_calculator('03-10-1994')}", "Diving": 53, "Handling": 45, "Reflexes": 52,
-                 "Special ability": None},
+keeper_stats = [{"Name": "Kepa Arrizabalaga", "Age": f"{age_calculator('03-10-1994')}", "Diving": 53, "Handling": 45, "Reflexes": 52},
                 {"Name": "David Marshall",
-                    "Age": f"{age_calculator('05-03-1985')}", "Diving": 63, "Handling": 60, "Reflexes": 42, "Special ability": None},
+                    "Age": f"{age_calculator('05-03-1985')}", "Diving": 63, "Handling": 60, "Reflexes": 42},
                 {"Name": "Unai Simon", "Age": f"{age_calculator('11-06-1997')}", "Diving": 68,
-                 "Handling": 53, "Reflexes": 74, "Special ability": "Early read"},
+                 "Handling": 53, "Reflexes": 74},
                 {"Name": "Petr Cech", "Age": f"{age_calculator('20-05-1982')}", "Diving": 78,
-                 "Handling": 85, "Reflexes": 62, "Special ability": "Safe hands"},
-                {"Name": "Iker Casillas", "Age": f"{age_calculator('20-05-1981')}", "Diving": 87, "Handling": 73, "Reflexes": 95, "Special ability": "Cat spring"}]
+                 "Handling": 85, "Reflexes": 62},
+                {"Name": "Iker Casillas", "Age": f"{age_calculator('20-05-1981')}", "Diving": 87, "Handling": 73, "Reflexes": 95}]
 
 
 def penalty_shootout():
@@ -209,9 +207,9 @@ def penalty_shootout():
 
         round_points -= round_points
 
-        # prompt user to select their penalty taker and goalkeeper
-        user_taker = player_selection(taker_stats, "penalty taker", points)
+        # prompt user to select their goalkeeper and penalty taker
         user_keeper = player_selection(keeper_stats, "goalkeeper", points)
+        user_taker = player_selection(taker_stats, "penalty taker", points)
 
         # initialise the score and perform the coin toss to decide if the user takes first
         user_score = 0
