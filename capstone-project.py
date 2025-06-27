@@ -13,6 +13,7 @@ def age_calculator(dob):
     given_date = datetime.strptime(dob, "%d-%m-%Y")
     age_years = now.year - given_date.year
 
+    # account for the fact the person's birthday may not have passed in the current year
     if now.month - given_date.month < 0 or (now.month == given_date.month and now.day - given_date.day < 0):
         age_years -= 1
 
@@ -21,7 +22,7 @@ def age_calculator(dob):
 
 def player_selection(player_stats, player_type, user_points):
     '''
-    Display the selection of players and their statistics, prompting the user to select one.
+    Display a selection of players and their statistics, prompting the user to select one.
 
     Args:
     player_stats (list): a list of dictionaries that contain statistics for each selectable player.
@@ -46,7 +47,7 @@ def player_selection(player_stats, player_type, user_points):
                 f"Points = {user_points} \nChoose your {player_type} (select to preview stats): \n {player_names_str}"))
 
             # check that the user's input is valid and they have enough points to select the chosen player.
-            #  allow them to view the stats of their chosen player and either confirm or go back to re-select.
+            # allow them to view the stats of their chosen player and either confirm or go back to re-select.
             if 0 < user_player < len(player_names)+1 and player_points[user_player-1] <= user_points:
                 print(player_stats[user_player - 1])
                 confirm = input(
@@ -83,14 +84,14 @@ def coin_toss():
 
 def penalty(keeper_stats_avg, taker_stats_avg, goalkeeper, first_taker, difficulty):
     '''
-    Prompt the user to take or save a penalty by selecting where to shoot or dive. 
+    Prompt the user to take/save a penalty by selecting where to shoot/dive. 
 
     args:
-    keeper_stats_avg (int): Mean of the statistics of the user's chosen keeper.
+    keeper_stats_avg (int): Mean of the statistics of the user's chosen goalkeeper.
     taker_stats_avg (int): Mean of statistics of the user's chosen penalty taker.
     goalkeeper (bool): True if the user is saving a penalty, False if they are shooting.
     first_taker (bool): True if the user took the first penalty of the shootout, False if not.
-    difficulty (str): Determines the difficulty of the shootout - Easy, Intermediate, Hard, Very Hard.
+    difficulty (int): User's selected difficulty for the shootout as an integer (1-Easy, 2-Intermediate, 3-Hard, 4-Very Hard).
     '''
     if goalkeeper:
         phrases = ["dive", "Penalty saved! The crowd goes wild.",
@@ -105,11 +106,12 @@ def penalty(keeper_stats_avg, taker_stats_avg, goalkeeper, first_taker, difficul
         if not 0 < user_choice < 7:
             raise Exception
 
-        # the chance of the opponent saving/scoring each penalty increases by 5% if they win the coin toss to reflect the advantage of doing so in real life.
+        # the winner of the coin toss gets an 5% increase on their chances of scoring/saving each penalty to reflect the advantage of doing so in real life.
         # for each level of difficulty above Easy the opponent has a 10% greater chance of scoring/saving a penalty.
-        buffer = int(not first_taker)*5 + (difficulty-1)*10
+        buffer = int(not first_taker)*5 - \
+            int(first_taker)*5 + (difficulty-1)*10
         opponent = random.randint(
-            1+buffer, 100+buffer)
+            0+buffer, 99+buffer)
 
         if (goalkeeper and opponent <= keeper_stats_avg) or (not goalkeeper and opponent <= taker_stats_avg):
             print(f"{phrases[1]}")
@@ -153,25 +155,25 @@ def check_score(user_score, opponent_score, shot_count, first_taker):
     return False
 
 
-taker_stats = [{"Name": "Alvaro Morata", "Age": f"{age_calculator('23-10-1992')}", "Shot power": 55, "Accuracy": 48, "Composure": 27,
+taker_stats = [{"Name": "Alvaro Morata", "Age": f"{age_calculator('23-10-1992')}", "Shot power": 60, "Accuracy": 53, "Composure": 37,
                 "Special ability": None},
                {"Name": "Scott McTominay",
-                   "Age": f"{age_calculator('08-12-1996')}", "Shot power": 58, "Accuracy": 42, "Composure": 50, "Special ability": None},
-               {"Name": "Bruno Fernandes", "Age": f"{age_calculator('08-09-1994')}", "Shot power": 60,
-                "Accuracy": 56, "Composure": 64, "Special ability": "Hop penalty"},
-               {"Name": "Andrea Pirlo", "Age": f"{age_calculator('19-05-1979')}", "Shot power": 46,
-                "Accuracy": 75, "Composure": 90, "Special ability": "Panenka penalty"},
-               {"Name": "Cristiano Ronaldo", "Age": f"{age_calculator('05-02-1985')}", "Shot power": 85, "Accuracy": 73, "Composure": 82, "Special ability": "Volley penalty"}]
+                   "Age": f"{age_calculator('08-12-1996')}", "Shot power": 68, "Accuracy": 57, "Composure": 55, "Special ability": None},
+               {"Name": "Bruno Fernandes", "Age": f"{age_calculator('08-09-1994')}", "Shot power": 62,
+                "Accuracy": 73, "Composure": 75, "Special ability": "Hop penalty"},
+               {"Name": "Andrea Pirlo", "Age": f"{age_calculator('19-05-1979')}", "Shot power": 53,
+                "Accuracy": 94, "Composure": 93, "Special ability": "Panenka penalty"},
+               {"Name": "Cristiano Ronaldo", "Age": f"{age_calculator('05-02-1985')}", "Shot power": 95, "Accuracy": 84, "Composure": 91, "Special ability": "Volley penalty"}]
 
-keeper_stats = [{"Name": "Kepa Arrizabalaga", "Age": f"{age_calculator('03-10-1994')}", "Diving": 70, "Handling": 58, "Reflexes": 32,
+keeper_stats = [{"Name": "Kepa Arrizabalaga", "Age": f"{age_calculator('03-10-1994')}", "Diving": 53, "Handling": 45, "Reflexes": 52,
                  "Special ability": None},
                 {"Name": "David Marshall",
-                    "Age": f"{age_calculator('05-03-1985')}", "Diving": 70, "Handling": 58, "Reflexes": 32, "Special ability": None},
-                {"Name": "Unai Simon", "Age": f"{age_calculator('11-06-1997')}", "Diving": 70,
-                 "Handling": 58, "Reflexes": 32, "Special ability": "Early read"},
-                {"Name": "Petr Cech", "Age": f"{age_calculator('20-05-1982')}", "Diving": 70,
-                 "Handling": 58, "Reflexes": 32, "Special ability": "Safe hands"},
-                {"Name": "Iker Casillas", "Age": f"{age_calculator('20-05-1981')}", "Diving": 70, "Handling": 58, "Reflexes": 32, "Special ability": "Cat spring"}]
+                    "Age": f"{age_calculator('05-03-1985')}", "Diving": 63, "Handling": 60, "Reflexes": 42, "Special ability": None},
+                {"Name": "Unai Simon", "Age": f"{age_calculator('11-06-1997')}", "Diving": 68,
+                 "Handling": 53, "Reflexes": 74, "Special ability": "Early read"},
+                {"Name": "Petr Cech", "Age": f"{age_calculator('20-05-1982')}", "Diving": 78,
+                 "Handling": 85, "Reflexes": 62, "Special ability": "Safe hands"},
+                {"Name": "Iker Casillas", "Age": f"{age_calculator('20-05-1981')}", "Diving": 87, "Handling": 73, "Reflexes": 95, "Special ability": "Cat spring"}]
 
 
 def penalty_shootout():
@@ -248,10 +250,10 @@ def penalty_shootout():
         plays += 1
 
         if winner == 0:
-            round_points += 300 + (difficulty-1)*200
+            round_points += 200 + (difficulty-1)*200
             print(f"You win!!! \nRound points: {round_points}")
         else:
-            round_points -= 150
+            round_points -= 100 * (difficulty-1)
             print(f"You lose!!! \nRound points: {round_points}")
 
     print(
